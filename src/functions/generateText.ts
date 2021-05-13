@@ -1,4 +1,6 @@
-import { Corpus, GeneratedText, Prefix, Suffixes } from '../types';
+import R from 'ramda';
+import type { Corpus, GeneratedText, Prefix, Suffixes } from '../types';
+import { splitString } from './helpers/splitString';
 const { floor, random } = Math;
 
 /*
@@ -45,13 +47,41 @@ export function generateText({
   startingPrefix,
   wordLimit,
 }: GenerateTextParams): GeneratedText {
-  if (typeof wordLimit === 'number' && wordLimit < 3) {
-    console.error('Invalid wordLimit - must be 3 or higher');
+  // Validate corpus
+  if (!R.is(Map, corpus)) {
+    console.error('Invalid corpus value.');
+    return startingPrefix;
+  }
+
+  if (corpus.size === 0) {
+    console.error('Corpus is empty.');
+    return startingPrefix;
+  }
+
+  // Validate startingPrefix
+  if (!R.is(String, startingPrefix)) {
+    console.error('Prefix is not a string.');
+    return '';
+  }
+
+  if (startingPrefix.split(' ').length < 2) {
+    console.error('Prefix has to be at least two words seperated by a space.');
+    return startingPrefix;
+  }
+
+  // Validate wordLimit
+  if (wordLimit !== undefined && !R.is(Number, wordLimit)) {
+    console.error('Invalid wordLimit-value - has to be a number or undefined.');
+    return startingPrefix;
+  }
+
+  if (R.is(Number, wordLimit) && wordLimit < 3) {
+    console.error('Invalid wordLimit - must be 3 or higher.');
     return startingPrefix;
   }
 
   // Replace line-breaks with spaces and turn text into a words-array
-  const chain = startingPrefix.replace(/(\r\n|\n|\r)/gm, ' ').split(' ');
+  const chain = splitString(startingPrefix);
 
   return walkChain({
     corpus,

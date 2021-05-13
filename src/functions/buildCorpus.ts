@@ -1,3 +1,5 @@
+import R from 'ramda';
+import { splitString } from './helpers/splitString';
 import type { Corpus, Source } from '../types';
 
 /*
@@ -5,8 +7,18 @@ import type { Corpus, Source } from '../types';
  * suffixes as an array of strings (value).
  */
 export function buildCorpus(textInput: Source): Corpus {
-  // Replace line-breaks with spaces and turn text into a words-array
-  const wordsArray = textInput.replace(/(\r\n|\n|\r)/gm, ' ').split(' ');
+  // Validate input
+  if (!R.is(String, textInput)) {
+    console.error('Input needs to be a string.');
+    return new Map();
+  }
+
+  if (splitString(textInput).length < 3) {
+    console.error('Input needs to be at least three words seperated by a space.');
+    return new Map();
+  }
+
+  const wordsArray = splitString(textInput);
 
   return wordsArray.reduce((acc, currentValue, currentIndex) => {
     // Stop creating pairs, once we run out of sufficent words for a prefix/suffix pair

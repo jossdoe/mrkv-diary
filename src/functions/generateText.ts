@@ -2,34 +2,22 @@ import { Corpus, GeneratedText, Prefix, Suffixes } from '../types';
 const { floor, random } = Math;
 
 /*
- * Randomly returns a boolean. The chance to hit true starts at the min value
- * and progressively increases until it reaches 100% at the max value.
- */
-type IsEndingParams = {
-  currentIndex: number;
-  min: number;
-  max: number;
-};
-
-export function isEnding({ currentIndex, min, max }: IsEndingParams) {
-  if (currentIndex < min) return false;
-  const scale = 100 / (max - min);
-  if (random() * 100 < (currentIndex - min) * scale) return true;
-  return false;
-}
-
-/*
  * Takes in the corpus of prefix/suffix-pairs and generates a chain of words
  * based on it as an Array of strings.
  */
 type WalkChainParams = {
   corpus: Corpus;
   chain: Suffixes;
+  wordLimit?: number;
 };
 
-export function walkChain({ corpus, chain }: WalkChainParams): Suffixes {
-  // Check if the chain is ending (currently hard-coded randomizer)
-  if (isEnding({ currentIndex: chain.length, min: 50, max: 70 })) return chain;
+export function walkChain({
+  corpus,
+  chain,
+  wordLimit,
+}: WalkChainParams): Suffixes {
+  // End chain if limit is reached (default value is 50 words)
+  if (chain.length >= (wordLimit || 50)) return chain;
 
   const currentPrefix = `${chain[chain.length - 2]} ${chain[chain.length - 1]}`;
   const suffixValues = corpus.get(currentPrefix);
@@ -39,7 +27,7 @@ export function walkChain({ corpus, chain }: WalkChainParams): Suffixes {
 
   const suffix = suffixValues[floor(random() * suffixValues.length)];
 
-  return walkChain({ corpus, chain: [...chain, suffix] });
+  return walkChain({ corpus, chain: [...chain, suffix], wordLimit });
 }
 
 /*
@@ -49,17 +37,25 @@ export function walkChain({ corpus, chain }: WalkChainParams): Suffixes {
 type GenerateTextParams = {
   corpus: Corpus;
   startingPrefix: Prefix;
+  wordLimit?: number;
 };
 
 export function generateText({
   corpus,
   startingPrefix,
+  wordLimit,
 }: GenerateTextParams): GeneratedText {
+  if (typeof wordLimit === 'number' && wordLimit < 3) {
+    console.error('Invalid wordLimit - must be 3 or higher');
+    return startingPrefix;
+  }
+
   // Replace line-breaks with spaces and turn text into a words-array
   const chain = startingPrefix.replace(/(\r\n|\n|\r)/gm, ' ').split(' ');
 
   return walkChain({
     corpus,
     chain,
+    wordLimit,
   }).join(' ');
 }

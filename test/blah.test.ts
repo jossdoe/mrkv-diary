@@ -38,10 +38,14 @@ I hope we both die`;
 
 test('generateText', () => {
   const corpus = buildCorpus(noChildren);
-  const text = generateText({ corpus, startingPrefix: 'I hope' });
+  const text = generateText({
+    corpus,
+    startingPrefix: 'I hope',
+    wordLimit: 20,
+  });
 
-  console.log(corpus);
   console.log(text);
 
   expect(text).toBeTruthy();
+  expect(text.split(' ')).toHaveLength(20);
 });

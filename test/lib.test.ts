@@ -36,7 +36,22 @@ Hand in unlovable hand
 And I hope you die
 I hope we both die`;
 
-test('generateText', () => {
+test('Generate text without wordLimit', () => {
+  const corpus = buildCorpus(noChildren);
+  const text = generateText({
+    corpus,
+    startingPrefix: 'I hope',
+  });
+
+  console.log(text);
+
+  expect(text).toBeTruthy();
+  expect(text.split(' ')).toHaveLength(50);
+  expect(text.split(' ')[0]).toBe('I');
+  expect(text.split(' ')[1]).toBe('hope');
+});
+
+test('Generate text with wordLimit', () => {
   const corpus = buildCorpus(noChildren);
   const text = generateText({
     corpus,
@@ -48,4 +63,6 @@ test('generateText', () => {
 
   expect(text).toBeTruthy();
   expect(text.split(' ')).toHaveLength(20);
+  expect(text.split(' ')[0]).toBe('I');
+  expect(text.split(' ')[1]).toBe('hope');
 });

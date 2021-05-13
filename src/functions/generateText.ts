@@ -35,10 +35,7 @@ export function walkChain({ corpus, chain }: WalkChainParams): Suffixes {
   const suffixValues = corpus.get(currentPrefix);
 
   // Fallback for an invalid prefix
-  if (!suffixValues) {
-    console.error('Error while generating text: Invalid prefix provided.');
-    return chain;
-  }
+  if (!suffixValues) return chain;
 
   const suffix = suffixValues[floor(random() * suffixValues.length)];
 

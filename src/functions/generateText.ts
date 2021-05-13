@@ -1,4 +1,4 @@
-import { Corpus, GeneratedText, Prefix, Suffixes } from 'types';
+import { Corpus, GeneratedText, Prefix, Suffixes } from '../types';
 const { floor, random } = Math;
 
 /*

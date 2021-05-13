@@ -1,4 +1,4 @@
-import type { Corpus, Source } from 'types';
+import type { Corpus, Source } from '../types';
 
 /*
  * Takes a text and turns it into a Map of prefixes (key) with their corresponding

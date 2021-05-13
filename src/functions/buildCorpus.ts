@@ -5,7 +5,8 @@ import type { Corpus, Source } from 'types';
  * suffixes as an array of strings (value).
  */
 export function buildCorpus(textInput: Source): Corpus {
-  const wordsArray = textInput.split(' ');
+  // Replace line-breaks with spaces and turn text into a words-array
+  const wordsArray = textInput.replace(/(\r\n|\n|\r)/gm, ' ').split(' ');
 
   return wordsArray.reduce((acc, currentValue, currentIndex) => {
     // Stop creating pairs, once we run out of sufficent words for a prefix/suffix pair
